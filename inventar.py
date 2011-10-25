@@ -46,24 +46,60 @@ def new_hardware():
     c.close()
     redirect(server + "/hardware/new")
   else:
-    c.execute("SELECT number FROM rooms")
-    rooms_result = c.fetchall()
-    c.execute("SELECT name FROM departments")
-    departments_result = c.fetchall()
-    c.execute("SELECT number FROM sockets")
-    sockets_result = c.fetchall()
+    r, d, s = helper.get_rooms_departments_sockets(c)
     c.close()
     # pass the rooms, departments and sockets    
-    return template('new_hardware.tpl', rooms = rooms_result, departments = departments_result, sockets = sockets_result)
+    return template('new_hardware.tpl', rooms = r, departments = d, sockets = s)
 
-@route('hardware/:id', method="GET")
+@route('/hardware/:id', method="GET")
 @validate(id=int)
 def edit_hardware(id):
   conn, c = helper.get_connection()
-  c.execute("SELECT * FROM hardwares WHERE id = ?", [id])
-  hardware_result = c.fetchall
-  c.execute("SELECT  FROM ")
+  if request.GET.get('save', '').strip():
+    description = request.GET.get('description', '').strip()
+    serial_no   = request.GET.get('serial_number', '').strip()
+    sap_no      = request.GET.get('sap_number', '').strip()
+    zedat_no    = request.GET.get('zedat_number', '').strip()
+    billing_no  = request.GET.get('billing_number', '').strip()
+    buying_date = request.GET.get('buying_date', '').strip()
+    article_no  = request.GET.get('article_number', '').strip()
+    other       = request.GET.get('other', '').strip()
+    room        = request.GET.get('room','').strip()
+    socket      = request.GET.get('socket', '').strip()
+    department  = request.GET.get('department', '').strip()
+    
+    query = "UPDATE hardwares SET "
+    query += "description = '"+ description + "', "
+    query += "serial_number = '" + serial_no + "', "
+    query += "sap_number = '" + sap_no + "', "
+    query += "zedat_number = '" + zedat_no + "',"
+    query += "billing_number = '" + billing_no + "', "
+    query += "buying_date = '" + buying_date + "', "
+    query += "article_number = '" + article_no + "', "
+    query += "other = '" + other + "', "
+    query += "room = '" + room + "', "
+    query += "socket = '"+ socket + "', "
+    query += "department = '"+ department + "' "
+    query += "WHERE id = " + str(id)
+    print query
+    c.execute (query)
+    conn.commit()
+    c.close()
+    redirect(server + "/hardware/"+str(id))
+  else:
+    c.execute("SELECT * FROM hardwares WHERE id = ?", [id])
+    result = c.fetchone()
+    r, d, s = helper.get_rooms_departments_sockets(c)
+    c.close()
+    return template('show_hardware', id = id, row = result, rooms = r, departments = d, sockets = s )
+
+@validate(id=int)
+def delete_hardware(id):
+  conn, c = helper.get_connection()
+  c.execute("DELETE FROM hardwares WHERE id = ?", [id])
+  conn.commit()
   c.close()
+  redirect(server + "/hardware")
 
 @route('/department')
 def list_departments():
