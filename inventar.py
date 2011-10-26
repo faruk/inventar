@@ -160,6 +160,7 @@ def new_room():
     c.execute('INSERT INTO rooms(number, department) VALUES(?,?)', (number, department))
     conn.commit()
     c.close()
+    helper.add_socket(number)
     redirect(server + '/room')
   else:
     c.execute('SELECT name FROM departments')
@@ -179,7 +180,8 @@ def edit_room(id):
     query +="department = '"+department+"' "
     query +="WHERE id = "+str(id)
     c.execute(query)
-    conn.commit
+    conn.commit()
+    helper.edit_socket(id)
     redirect(server+"/room/"+str(id))
   else:
     c.execute('SELECT * FROM rooms WHERE id = ?', [str(id)])
@@ -192,8 +194,8 @@ def edit_room(id):
 @validate(id=int)
 def delete_room(id):
   helper.delete('rooms', id)
+  helper.delete_sockets(id)
   redirect(server + "/room")
-
 
 
 @route('/js/css/smoothness/jquery-ui-1.8.16.custom.css')

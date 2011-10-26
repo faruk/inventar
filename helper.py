@@ -32,3 +32,37 @@ def delete(table, id):
   c.execute(query)
   conn.commit()
   c.close()
+
+#####################
+# Socket Helper
+#####################
+def add_socket(room):
+  conn, c = get_connection()
+  c.execute("SELECT number, id FROM rooms WHERE number = ?", [str(room)])
+  result = c.fetchone()
+  number = result['number']
+  roomid = result['id']
+  c.execute("INSERT INTO sockets(number, room_id) VALUES(?,?)", (number+"/1", roomid))
+  c.execute("INSERT INTO sockets(number, room_id) VALUES(?,?)", (number+"/2", roomid))
+  conn.commit()
+  c.close()
+
+def edit_socket(room):
+  conn, c = get_connection()
+  c.execute("SELECT id, number FROM rooms WHERE id = ?", [str(room)])
+  result = c.fetchone()
+  number = result['number']
+  c.execute("SELECT id FROM sockets WHERE room_id = ?", [str(room)])
+  result = c.fetchone()
+  id = result['id']
+  c.execute("UPDATE sockets SET number = '"+number+"/1"+"' WHERE id = "+str(id))
+  c.execute("UPDATE sockets SET number = '"+number+"/2"+"' WHERE id = "+str(int(id)+1))
+  conn.commit()
+  c.close()
+
+def delete_sockets(room):
+  conn, c = get_connection()
+  c.execute("DELETE FROM sockets WHERE room_id = ?", [str(room)])
+  conn.commit()
+  c.close()
+
