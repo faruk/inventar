@@ -46,6 +46,9 @@
     </ul>
     <li><a href="/software">software</a></li>
     <li><a href="/room">room</a></li>
+    <ul>
+      <li><a href="/room/new">new</a></li>
+    </ul>
     <li><a href="/user">user</a></li>
     <li><a href="/department">department</a></li>
     <ul>

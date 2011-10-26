@@ -1,4 +1,5 @@
 import sqlite3
+from bottle import request
 
 def get_connection():
   conn = sqlite3.connect('inventar.db')
@@ -21,3 +22,13 @@ def get_rooms_departments_sockets(c):
   sockets_result = c.fetchall()
   return rooms_result, departments_result, sockets_result
 
+def GET(x):
+  return request.GET.get(x, '').strip()
+
+
+def delete(table, id):
+  conn, c  = get_connection()
+  query = "DELETE FROM "+table+" WHERE id = " +str(id)
+  c.execute(query)
+  conn.commit()
+  c.close()

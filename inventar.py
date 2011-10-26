@@ -37,11 +37,10 @@ def new_hardware():
     buying_date = request.GET.get('buying_date', '').strip()
     article_no  = request.GET.get('article_number', '').strip()
     other       = request.GET.get('other', '').strip()
-    #!!!!!!!!!!!!!!!!!!!!!
-    #!! TODO
-    #!! add room, department and socket
-    #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    c.execute('INSERT INTO hardwares(description, serial_number, sap_number, zedat_number, billing_number, buying_date, article_number, other) VALUES (?,?,?,?,?,?,?,?)', (description, serial_no, sap_no, zedat_no, billing_no, buying_date, article_no, other))
+    room        = request.GET.get('room','').strip()
+    socket      = request.GET.get('socket', '').strip()
+    department  = request.GET.get('department', '').strip()
+    c.execute('INSERT INTO hardwares(description, serial_number, sap_number, zedat_number, billing_number, buying_date, article_number, other, room, socket, department) VALUES (?,?,?,?,?,?,?,?,?,?,?)', (description, serial_no, sap_no, zedat_no, billing_no, buying_date, article_no, other, room, socket, department))
     conn.commit()
     c.close()
     redirect(server + "/hardware/new")
@@ -67,7 +66,6 @@ def edit_hardware(id):
     room        = request.GET.get('room','').strip()
     socket      = request.GET.get('socket', '').strip()
     department  = request.GET.get('department', '').strip()
-    
     query = "UPDATE hardwares SET "
     query += "description = '"+ description + "', "
     query += "serial_number = '" + serial_no + "', "
@@ -81,7 +79,6 @@ def edit_hardware(id):
     query += "socket = '"+ socket + "', "
     query += "department = '"+ department + "' "
     query += "WHERE id = " + str(id)
-    print query
     c.execute (query)
     conn.commit()
     c.close()
@@ -93,14 +90,15 @@ def edit_hardware(id):
     c.close()
     return template('show_hardware', id = id, row = result, rooms = r, departments = d, sockets = s )
 
+@route('/hardware/delete/:id', method = "GET")
 @validate(id=int)
 def delete_hardware(id):
-  conn, c = helper.get_connection()
-  c.execute("DELETE FROM hardwares WHERE id = ?", [id])
-  conn.commit()
-  c.close()
+  helper.delete('hardwares', id)
   redirect(server + "/hardware")
 
+###########################
+# Department Section
+#
 @route('/department')
 def list_departments():
   conn, c = helper.get_connection()
@@ -121,20 +119,86 @@ def new_department():
     c.close()
     return template('new_department.tpl')
 
+@route('/department/:id', method="GET")
+@validate(id=int)
+def edit_department(id):
+  conn, c =helper.get_connection()
+  if request.GET.get('save', '').strip():
+    name = request.GET.get('name', '').strip()
+    c.execute('UPDATE department SET name = ? WHERE id = ?', (name, id))
+    conn.commit()
+    c.close()
+    redirect(server + "/department/"+str(id))
+  else:
+    c.execute("SELECT * FROM departments WHERE id = ?", [id])
+    result = c.fetchone()
+    return template('show_department', id=id, row = result)
+
 @route('/department/delete/:id', method="GET")
 @validate(id=int)
 def delete_department(id):
-  conn, c = helper.get_connection()
-  c.execute('DELETE FROM departments WHERE id = ?', [id])
-  conn.commit()
-  c.close()
+  helper.delete('departments', id)
   redirect(server+"/department")
+
+#############################
+# ROOM SECTION
+#
+@route('/room')
+def list_rooms():
+  conn, c = helper.get_connection()
+  c.execute("SELECT number, department, id FROM rooms")
+  result = c.fetchall()
+  c.close()
+  return template('show_rooms', rows = result, name = "rooms")
+
+@route('/room/new')
+def new_room():
+  conn, c = helper.get_connection()
+  if request.GET.get('save', '').strip():
+    number = helper.GET('number')
+    department = helper.GET('department')
+    c.execute('INSERT INTO rooms(number, department) VALUES(?,?)', (number, department))
+    conn.commit()
+    c.close()
+    redirect(server + '/room')
+  else:
+    c.execute('SELECT name FROM departments')
+    d = c.fetchall()
+    c.close()
+    return template('new_room', departments = d)
+
+@route('/room/:id', method="GET")
+@validate(id=int)
+def edit_room(id):
+  conn, c = helper.get_connection()
+  if helper.GET('save'):
+    number = helper.GET('number')
+    department = helper.GET('department')
+    query = "UPDATE rooms SET "
+    query +="number = '"+number+"', "
+    query +="department = '"+department+"' "
+    query +="WHERE id = "+str(id)
+    c.execute(query)
+    conn.commit
+    redirect(server+"/room/"+str(id))
+  else:
+    c.execute('SELECT * FROM rooms WHERE id = ?', [str(id)])
+    r = c.fetchone()
+    c.execute('SELECT name FROM departments')
+    d = c.fetchall()
+    return template('show_room', room = r, departments = d)
+
+@route('/room/delete/:id', method="GET")
+@validate(id=int)
+def delete_room(id):
+  helper.delete('rooms', id)
+  redirect(server + "/room")
+
+
+
+@route('/js/css/smoothness/jquery-ui-1.8.16.custom.css')
 def serve_jquery_ui_css():
   static_file('/js/css/smoothness/jquery-ui-1.8.16.custom.css', root='.', mimetype='text/css')
-
-@route('/js/jquery-1.6.4.min.js')
-def server_jquery():
-  static_file('/js/jquery-1.6.4.min.js', root='.', mimetype = 'text/javascript')
 
 @route('/js/ui/jquery-ui-1.8.16.custom.js')
 def serve_jquery_ui():
