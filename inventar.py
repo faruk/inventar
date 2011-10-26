@@ -12,9 +12,7 @@ def start():
 
 ################
 # Hardware Part
-###############
-
-#List all Hardware
+#
 @route('/hardware')
 def list_hardware():
   conn, c = helper.get_connection()
@@ -27,63 +25,23 @@ def list_hardware():
 
 @route('/hardware/new', method='GET')
 def new_hardware():
-  conn, c = helper.get_connection()
   if request.GET.get('save', '').strip():
-    description = request.GET.get('description', '').strip()
-    serial_no   = request.GET.get('serial_number', '').strip()
-    sap_no      = request.GET.get('sap_number', '').strip()
-    zedat_no    = request.GET.get('zedat_number', '').strip()
-    billing_no  = request.GET.get('billing_number', '').strip()
-    buying_date = request.GET.get('buying_date', '').strip()
-    article_no  = request.GET.get('article_number', '').strip()
-    other       = request.GET.get('other', '').strip()
-    room        = request.GET.get('room','').strip()
-    socket      = request.GET.get('socket', '').strip()
-    department  = request.GET.get('department', '').strip()
-    c.execute('INSERT INTO hardwares(description, serial_number, sap_number, zedat_number, billing_number, buying_date, article_number, other, room, socket, department) VALUES (?,?,?,?,?,?,?,?,?,?,?)', (description, serial_no, sap_no, zedat_no, billing_no, buying_date, article_no, other, room, socket, department))
-    conn.commit()
-    c.close()
+    helper.insert_hardware()
     redirect(server + "/hardware/new")
   else:
+    conn, c = helper.get_connection()
     r, d, s = helper.get_rooms_departments_sockets(c)
     c.close()
-    # pass the rooms, departments and sockets    
     return template('new_hardware.tpl', rooms = r, departments = d, sockets = s)
 
 @route('/hardware/:id', method="GET")
 @validate(id=int)
 def edit_hardware(id):
-  conn, c = helper.get_connection()
   if request.GET.get('save', '').strip():
-    description = request.GET.get('description', '').strip()
-    serial_no   = request.GET.get('serial_number', '').strip()
-    sap_no      = request.GET.get('sap_number', '').strip()
-    zedat_no    = request.GET.get('zedat_number', '').strip()
-    billing_no  = request.GET.get('billing_number', '').strip()
-    buying_date = request.GET.get('buying_date', '').strip()
-    article_no  = request.GET.get('article_number', '').strip()
-    other       = request.GET.get('other', '').strip()
-    room        = request.GET.get('room','').strip()
-    socket      = request.GET.get('socket', '').strip()
-    department  = request.GET.get('department', '').strip()
-    query = "UPDATE hardwares SET "
-    query += "description = '"+ description + "', "
-    query += "serial_number = '" + serial_no + "', "
-    query += "sap_number = '" + sap_no + "', "
-    query += "zedat_number = '" + zedat_no + "',"
-    query += "billing_number = '" + billing_no + "', "
-    query += "buying_date = '" + buying_date + "', "
-    query += "article_number = '" + article_no + "', "
-    query += "other = '" + other + "', "
-    query += "room = '" + room + "', "
-    query += "socket = '"+ socket + "', "
-    query += "department = '"+ department + "' "
-    query += "WHERE id = " + str(id)
-    c.execute (query)
-    conn.commit()
-    c.close()
+    helper.update_hardware(id)
     redirect(server + "/hardware/"+str(id))
   else:
+    conn, c = helper.get_connection()
     c.execute("SELECT * FROM hardwares WHERE id = ?", [id])
     result = c.fetchone()
     r, d, s = helper.get_rooms_departments_sockets(c)
@@ -153,16 +111,11 @@ def list_rooms():
 
 @route('/room/new')
 def new_room():
-  conn, c = helper.get_connection()
   if request.GET.get('save', '').strip():
-    number = helper.GET('number')
-    department = helper.GET('department')
-    c.execute('INSERT INTO rooms(number, department) VALUES(?,?)', (number, department))
-    conn.commit()
-    c.close()
-    helper.add_socket(number)
+    helper.insert_room()
     redirect(server + '/room')
   else:
+    conn, c = helper.get_connection()
     c.execute('SELECT name FROM departments')
     d = c.fetchall()
     c.close()
@@ -171,19 +124,11 @@ def new_room():
 @route('/room/:id', method="GET")
 @validate(id=int)
 def edit_room(id):
-  conn, c = helper.get_connection()
   if helper.GET('save'):
-    number = helper.GET('number')
-    department = helper.GET('department')
-    query = "UPDATE rooms SET "
-    query +="number = '"+number+"', "
-    query +="department = '"+department+"' "
-    query +="WHERE id = "+str(id)
-    c.execute(query)
-    conn.commit()
-    helper.edit_socket(id)
+    helper.update_room(id)
     redirect(server+"/room/"+str(id))
   else:
+    conn, c = helper.get_connection()
     c.execute('SELECT * FROM rooms WHERE id = ?', [str(id)])
     r = c.fetchone()
     c.execute('SELECT name FROM departments')
@@ -197,7 +142,99 @@ def delete_room(id):
   helper.delete_sockets(id)
   redirect(server + "/room")
 
+######################
+# USER SECTION
+#
+@route('/user')
+def list_users():
+  conn, c = helper.get_connection()
+  c.execute('SELECT * FROM users')
+  result = c.fetchall()
+  c.close()
+  return template('show_users', rows = result)
 
+@route('/user/new', method="GET")
+def new_user():
+  if helper.GET('save'):
+    helper.insert_user()
+    redirect(server + "/user")
+  else:
+    conn, c = helper.get_connection()
+    c.execute("SELECT * FROM departments")
+    d = c.fetchall()
+    c.execute("SELECT * FROM rooms")
+    r = c.fetchall()
+    return template('new_user', departments = d, rooms = r)
+
+@route('/user/:id', method="GET")
+@validate(id=int)
+def edit_user(id):
+  if helper.GET('save'):
+    helper.update_user(id)
+    redirect(server + "/user/"+str(id))
+  else:
+    conn, c = helper.get_connection()
+    c.execute("SELECT * FROM users WHERE id = "+str(id))
+    result = c.fetchone()
+    c.execute("SELECT * FROM departments")
+    d = c.fetchall()
+    c.execute("SELECT * FROM rooms")
+    r = c.fetchall()
+    c.close()
+    return template('show_user.tpl', user = result, rooms=r, departments = d)
+
+@route('/user/delete/:id', method="GET")
+@validate(id=int)
+def delete_user(id):
+  helper.delete('users', id)
+  redirect(server+"/user")
+
+######################
+# SOFTWARE PART
+#
+@route('/software')
+def list_software():
+  conn, c = helper.get_connection()
+  c.execute("SELECT * FROM softwares")
+  result = c.fetchall()
+  c.close()
+  return template('show_softwares.tpl', rows = result)
+
+@route('/software/new', method="GET")
+def new_software():
+  if helper.GET('save'):
+    helper.insert_software()
+    redirect(server+"/software")
+  else:
+    conn, c = helper.get_connection()
+    c.execute("SELECT * FROM departments")
+    d = c.fetchall()
+    c.close()
+    return template('new_software.tpl', departments = d)
+
+@route('/software/:id', method="GET")
+@validate(id = int)
+def edit_software(id):
+  if helper.GET('save'):
+    helper.update_software(id)
+    redirect(server+"/software/"+str(id))
+  else:
+    conn, c = helper.get_connection()
+    c.execute("SELECT * FROM departments")
+    d = c.fetchall()
+    c.execute("SELECT * FROM softwares WHERE id = "+str(id))
+    sw = c.fetchone()
+    c.close()
+    return template('show_software', software = sw, departments = d)
+
+@route('/software/delete/:id', method="GET")
+@validate(id = int)
+def delete_software(id):
+  helper.delete('softwares', id)
+  redirect(server+"/software")
+
+#####################################################################
+# STATIC HELPER PART
 @route('/js/css/smoothness/jquery-ui-1.8.16.custom.css')
 def serve_jquery_ui_css():
   static_file('/js/css/smoothness/jquery-ui-1.8.16.custom.css', root='.', mimetype='text/css')

@@ -19,12 +19,12 @@
   z-index:1;
 }
 
-#menu a, a.visited {
+#menu ul li a, a.visited {
   text-decoration:none;
   color:white;
 }
 
-#menu a.hover {
+#menu ul li a.hover {
   background-color:white;
   color:black;
 }
@@ -45,11 +45,17 @@
       <li><a href="/hardware/new">new</a></li>
     </ul>
     <li><a href="/software">software</a></li>
+    <ul>
+      <li><a href="/software/new">new</a></li>
+    </ul>
     <li><a href="/room">room</a></li>
     <ul>
       <li><a href="/room/new">new</a></li>
     </ul>
     <li><a href="/user">user</a></li>
+    <ul>
+      <li><a href="/user/new">new</a></li>
+    </ul>
     <li><a href="/department">department</a></li>
     <ul>
       <li><a href="/department/new">new</a></li>

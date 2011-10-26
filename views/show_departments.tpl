@@ -7,7 +7,7 @@
   %for row in rows:
   <tr>
     <td>{{row[0]}}</td>
-    <td><a href = "/department/edit/{{row[1]}}">show & edit</a></td>
+    <td><a href = "/department/{{row[1]}}">show & edit</a></td>
     <td><a href = "/department/delete/{{row[1]}}">delete</a></td>
   </tr>
   %end

@@ -1,6 +1,6 @@
 %# template for the form for a new hardware part
 
-<p>Add a new Department to the Database:</p>
+<h1>Add new Department to the Database:</h1>
 <form action = "/department/new" method = "GET">
 <table border = "1">
   <tr>
