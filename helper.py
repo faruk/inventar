@@ -92,17 +92,17 @@ def update_hardware(id):
 ##################
 def insert_room():
   conn, c = get_connection()
-  number = helper.GET('number')
-  department = helper.GET('department')
+  number = GET('number')
+  department = GET('department')
   c.execute('INSERT INTO rooms(number, department) VALUES(?,?)', (number, department))
   conn.commit()
   c.close()
-  helper.add_socket(number)
+  add_socket(number)
 
 def update_room(id):
   conn, c = get_connection()
-  number = helper.GET('number')
-  department = helper.GET('department')
+  number = GET('number')
+  department = GET('department')
   query = "UPDATE rooms SET "
   query +="number = '"+number+"', "
   query +="department = '"+department+"' "
