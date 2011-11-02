@@ -233,6 +233,34 @@ def delete_software(id):
   helper.delete('softwares', id)
   redirect(server+"/software")
 
+######################
+# SOFTWARE-USER PART
+#
+@route('/software/user')
+def show_software_user_assignment():
+  conn, c = helper.get_connection()
+  c.execute('SELECT u.first_name, u.last_name, s.name, su.id, u.id, s.id FROM users u, softwares s, software_user su WHERE u.id = su.user_id AND s.id = su.software_id')
+  result = c.fetchall()
+  return template('show_software_user.tpl', rows = result)
+
+@route('/software/user/new', method = "GET")
+def new_software_user_assignment():
+  conn, c = helper.get_connection()
+  if helper.GET('save'):
+    user_id = helper.GET('user_id')
+    software_id = helper.GET('software_id')
+    c.execute('INSERT INTO software_user(software_id, user_id) VALUES(?,?)', (software_id, user_id))
+    conn.commit()
+    c.close()
+    redirect(server + "/software/user")
+  else:
+    c.execute('SELECT * FROM users')
+    u = c.fetchall()
+    c.execute('SELECT * FROM softwares')
+    s = c.fetchall()
+    c.close()
+    return template('new_software_user.tpl', users = u, softwares = s)
+
 #####################################################################
 # STATIC HELPER PART
 @route('/js/css/smoothness/jquery-ui-1.8.16.custom.css')
