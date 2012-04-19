@@ -2,7 +2,7 @@ import sqlite3
 from bottle import route, run, debug, template, request, static_file, validate, redirect
 import helper
 
-server = "http://lo-tek.de"
+server = ""
 
 @route('/')
 def start():
@@ -280,4 +280,4 @@ def server_jquery_ui_datepicker():
   static_file('/js/ui/jquery.ui.datepicker.js', root='.', mimetype='text/javascript')
 
 debug(True)
-run(reloader = True, port=80, host='0.0.0.0')
+run(reloader = True, port=777, host='127.0.0.1')
