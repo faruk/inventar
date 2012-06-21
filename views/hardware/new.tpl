@@ -32,6 +32,18 @@
             </div>
         </div>
         <div class="control-group">
+            <label class="control-label" for="servicetag">Service Tag</label>
+            <div class="controls">
+                <input type="text" class="input-xlarge" id="servicetag" name="servicetag">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="sn">Serial-No.</label>
+            <div class="controls">
+                <input type="text" class="input-xlarge" id="sn" name="sn">
+            </div>
+        </div>
+        <div class="control-group">
             <label class="control-label" for="buying_date">Buying Date</label>
             <div class="controls">
                 <input type="text" class="input-xlarge" id="buying_date" name="buying_date">
