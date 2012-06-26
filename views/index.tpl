@@ -45,6 +45,20 @@
                     <li><a href="/installations">installations</a></li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            user
+                        <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="/user/all">all</a>
+                            </li>
+                            <li>
+                                <a href="/user/new">new</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                             rooms 
                         <b class="caret"></b>
                         </a>
