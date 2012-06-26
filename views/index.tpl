@@ -1,6 +1,7 @@
 <html>
 <head>
     <link rel="stylesheet" href="/css/bootstrap/css/bootstrap.css" type="text/css">
+    <link rel="stylesheet" href="/css/dark-hive/jquery-ui.dark-hive.css" type="text/css">
 </head>
 <body>
     <div class="navbar">
@@ -94,10 +95,12 @@
     </div>
 
     <script src="/js/jquery.js"></script>
+    <script src="/js/js/jquery-ui.min.js"></script>
     <script src="/css/bootstrap/js/bootstrap.js"></script>
     <script>
 $(document).ready(function(){
     $(".dropdown-toggle").dropdown();
+    $("#buying_date").datepicker({ dateFormat: 'yy-mm-dd'});
 });
     </script>
 </body>
