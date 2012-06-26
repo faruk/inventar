@@ -3,6 +3,7 @@ from app.dao.department import Department
 from app.dao.room import Room
 from app.dao.hardware import Hardware
 from app.dao.software import Software
+from app.dao.user import User
 from app.utils.request import *
 
 @route('/')
@@ -19,7 +20,8 @@ def hardware_new():
         dao.insert(request.GET)
         redirect('/hardware/all')
     else:
-        return template("hardware/new", rooms=Room().get_all(), departments=Department().get_all())
+        return template("hardware/new", rooms=Room().get_all(), 
+            departments=Department().get_all(), users=User().get_all())
 
 @route('/hardware/edit/:id')
 def hardware_edit(id):
@@ -27,7 +29,7 @@ def hardware_edit(id):
         Hardware().update(request.GET)
         redirect('/hardware/all')
     return template("hardware/edit", hardware=Hardware().get(id), rooms=Room().get_all(),
-        departments = Department().get_all())
+        departments = Department().get_all(), users = User().get_all())
 
 @route('/hardware/delete/:id')
 def hardware_delete(id):
@@ -98,6 +100,35 @@ def room_delete(id):
 def room_all():
     dao = Room()
     return template("room/all", rooms = dao.get_all())
+
+
+### USER ROUTES
+
+@route('/user/new')
+def user_new():
+    if saved(request.GET):
+        User().insert(request.GET)
+        redirect('/user/all')
+    else:
+        return template("user/new", departments = Department().get_all())
+
+@route('/user/edit/:id')
+def user_edit(id):
+    if saved(request.GET):
+        User().update(request.GET)
+        redirect('/user/all')
+    else:
+        return template("user/edit", user = User.get(id), departments = Department().get_all())
+
+@route('/user/delete/:id')
+def user_delete(id):
+    User().delete(id)
+    redirect('/user/all')
+
+@route('/user/all')
+def user_all():
+    dao = User()
+    return template("user/all", users = dao.get_all())
 
 
 ### DEPARTMENT ROUTES
