@@ -53,6 +53,24 @@
             <label class="control-label" for="notes">Notes</label>
             <div class="controls">
                 <textarea class="input-xlarge" name="notes" id="notes" rows="3"></textarea>
+                <p>Make notes about vendor specific details (eg. model number)</p>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="cpu">Processor</label>
+            <div class="controls">
+                <input type="text" class="input-xlarge" id="cpu" name="cpu">
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="id_room">User</label>
+            <div class="controls">
+                <select class="input-xlarge" name="id_user" id="id_user">
+                    <option></option>
+                    %for user in users:
+                    <option value="{{user[0]}}">{{user[1]}} {{user[2]}}</option>
+                    %end
+                </select>
             </div>
         </div>
         <div class="control-group">
