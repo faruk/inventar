@@ -57,8 +57,9 @@ class Hardware:
                 JOIN room ON hardware.id_room = room.id
                 JOIN department ON hardware.id_department = department.id
                 JOIN user ON hardware.id_user = user.id
+            WHERE hardware.id = %s
             """
-        self.cursor.execute(sql)
+        self.cursor.execute(sql, (id))
         return self.cursor.fetchone()
 
     def __del__(self):

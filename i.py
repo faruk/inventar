@@ -1,4 +1,4 @@
-from bottle import route, template, static_file, run, debug, request, redirect
+from bottle import route, template, static_file, run, debug, request, redirect, FlupFCGIServer
 from app.dao.department import Department
 from app.dao.room import Room
 from app.dao.hardware import Hardware
@@ -173,5 +173,7 @@ def css(path):
 def js(path):
     return static_file(path, root='./js')
 
+#debug(True)
+#run(host='localhost', port='8888', reloader=True)
 debug(True)
-run(host='localhost', port='8888', reloader=True)
+run(server = FlupFCGIServer, port=10000, host="127.0.0.1")

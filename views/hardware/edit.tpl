@@ -16,7 +16,7 @@
         <div class="control-group">
             <label class="control-label" for="zedat">Zedat-No.</label>
             <div class="controls">
-                <input type="text" class="input-xlarge" id="zedat" name="zedat" value"{{hardware[3]}}">
+                <input type="text" class="input-xlarge" id="zedat" name="zedat" value="{{hardware[3]}}">
             </div>
         </div>
         <div class="control-group">
