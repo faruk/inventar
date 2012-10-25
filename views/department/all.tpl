@@ -2,14 +2,15 @@
     <thead>
         <tr>
             <th>name</th>
-        <tr>
+            <th>actions</th>
+        </tr>
     </thead>
     <tbody>
         %for department in departments:
         <tr>
             <td>{{department[1]}}</td>
-            <td><a href="/department/edit/{{department[0]}}" class="btn btn-primary">edit</a></td>
-            <td><a href="/department/delete/{{department[0]}}" class="btn btn-warning">delete</a></td>
+            <td><a href="/department/edit/{{department[0]}}" class="btn btn-primary inline">edit</a>
+                <a href="/department/delete/{{department[0]}}" class="btn btn-warning inline">delete</a></td>
         </tr>
         %end
     </tbody>

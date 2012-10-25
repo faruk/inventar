@@ -28,6 +28,7 @@ def hardware_edit(id):
     if saved(request.GET):
         Hardware().update(request.GET)
         redirect('/hardware/all')
+    print Hardware().get(id)
     return template("hardware/edit", hardware=Hardware().get(id), rooms=Room().get_all(),
         departments = Department().get_all(), users = User().get_all())
 
@@ -172,6 +173,14 @@ def css(path):
 @route('/js/<path:path:path>')
 def js(path):
     return static_file(path, root='./js')
+
+@route('/images/<path:path:path>')
+def images(path):
+    return static_file(path, root='./images')
+
+@route('/img/<path:path:path>')
+def img(path):
+    return static_file(path, root='./images')
 
 #debug(True)
 #run(host='localhost', port='8888', reloader=True)

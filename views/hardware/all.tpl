@@ -10,7 +10,8 @@
             <th>notes</th>
             <th>room</th>
             <th>department</th>
-        <tr>
+            <th>actions</th>
+        </tr>
     </thead>
     <tbody>
         %for hardware in hardwares:
@@ -24,8 +25,9 @@
             <td>{{hardware[7]}}</td>
             <td>{{hardware[8]}}</td>
             <td>{{hardware[9]}}</td>
-            <td><a href="/hardware/edit/{{hardware[0]}}" class="btn btn-primary">edit</a></td>
-            <td><a href="/hardware/delete/{{hardware[0]}}" class="btn btn-warning">delete</a></td>
+            <td>
+                <a href="/hardware/edit/{{hardware[0]}}" class="btn btn-primary inline">edit</a>
+                <a href="/hardware/delete/{{hardware[0]}}" class="btn btn-warning inline">delete</a></td>
         </tr>
         %end
     </tbody>
